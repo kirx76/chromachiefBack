@@ -4,27 +4,59 @@ services:
     container_name: postgres
     image: postgres:latest
     ports:
-    - "5432:5432"
+      - "5432:5432"
     volumes:
-    - /data/postgres:/data/postgres
+      - /data/postgres:/data/postgres
     env_file:
-    - docker.env
+      - docker.env
     networks:
-    - postgres
+      - postgres
 
   pgadmin:
     links:
-    - postgres:postgres
+      - postgres:postgres
     container_name: pgadmin
     image: dpage/pgadmin4
     ports:
-    - "8080:80"
+      - "8080:80"
     volumes:
-    - /data/pgadmin:/root/.pgadmin
+      - /data/pgadmin:/root/.pgadmin
     env_file:
-    - docker.env
+      - docker.env
     networks:
-    - postgres
+      - postgres
+
+#  my:
+#    build:
+#      context: .
+#      dockerfile: ./docker/react/Dockerfile
+##    command: npm run dev
+#    ports:
+#      - "3000-3002:3000"
+#    networks:
+#      - postgres
+#    env_file:
+#      - ./.env
+#    volumes:
+#      - .:/usr/src/app
+#      - /usr/src/app/node_modules
+#    environment:
+#      HOST: "0.0.0.0"
+
+#  next:
+#    build:
+#      context: .
+#      dockerfile: ./docker/react/Dockerfile
+#      args:
+#        NODE_ENV: "development"
+#    command: ts-node ./src/server.ts
+#    ports:
+#      - "3000-3002:3000"
+#    networks:
+#      - webnet
+#    env_file: ./.env
+#    environment:
+#      HOST: "0.0.0.0"
 
 networks:
   postgres:

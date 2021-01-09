@@ -13,6 +13,7 @@ const config: ConnectionOptions = {
   migrations: [
     'src/migrations/*.ts',
   ],
+  synchronize: false, // change that
   cli: {
     migrationsDir: 'src/migrations',
   },

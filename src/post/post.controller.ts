@@ -34,7 +34,6 @@ class PostController implements Controller {
       ...postData,
       author: request.user,
     });
-    await this.postRepository.save(newPost);
     newPost.author = undefined;
     response.send(newPost);
   }
