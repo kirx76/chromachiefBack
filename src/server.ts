@@ -6,6 +6,7 @@ import config from './ormconfig';
 import validateEnv from './utils/validateEnv';
 import PostController from "./applications/post/post.controller";
 import UserController from "./applications/user/user.controller";
+import TagController from "./applications/tag/tag.controller";
 
 validateEnv();
 
@@ -22,6 +23,7 @@ validateEnv();
     [
       new PostController(),
       new UserController(),
+      new TagController(),
     ],
   );
   app.listen();

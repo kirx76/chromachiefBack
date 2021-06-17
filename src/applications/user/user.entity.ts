@@ -1,5 +1,6 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import Post from "../post/post.entity";
+import Tag from "../tag/tag.entity";
 
 
 @Entity()
@@ -21,4 +22,7 @@ export default class User {
 
   @OneToMany(() => Post, (post: Post) => post.author)
   public posts: Post[];
+
+  @OneToMany(() => Tag, (tag: Tag) => tag.author)
+  public tags: Tag[];
 }

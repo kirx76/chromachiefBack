@@ -11,8 +11,11 @@ export default class Tag {
   @Column({nullable: false})
   public name: string;
 
-  // @ManyToMany(()=> Post, (post: Post)=> post.tags)
-  // public posts: Post[];
+  @ManyToOne(() => User, (author: User) => author.tags)
+  public author: User;
+
+  @ManyToMany(() => Post, (post: Post) => post.tags)
+  public posts: Post[];
 }
 // @Entity()
 // export default class Post {
