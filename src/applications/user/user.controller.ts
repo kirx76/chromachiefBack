@@ -12,6 +12,9 @@ import TokenData from "../../interfaces/tokenData.interface";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import LoginDto from "./login.dto";
 import WrongCredentialsException from "../../exceptions/WrongCredentialsException";
+import authMiddleware from "../../middleware/auth.middleware";
+import RequestWithUser from "../../interfaces/requestWithUser.interface";
+import PostNotFoundException from "../../exceptions/PostNotFoundException";
 
 
 export default class UserController implements Controller {
@@ -24,16 +27,40 @@ export default class UserController implements Controller {
   }
 
   private initializeRoutes = () => {
-    this.router.get(this.path, this.getAllUsers);
+    this.router
+      .get(this.path, authMiddleware, this.getMe)
+      .put(this.path, authMiddleware, this.updateUser)
     this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto), this.registration);
     this.router.post(`${this.path}/login`, validationMiddleware(LoginDto), this.loggingIn);
     this.router.post(`${this.path}/logout`, this.loggingOut);
   }
 
+  private updateUser = async (request: RequestWithUser, response: express.Response, next: express.NextFunction) => {
+    const userData: Partial<User> = request.body;
+    console.log(userData, request.user)
+    await this.userRepository.update(request.user.id, userData)
+    const updatedUser = await this.userRepository.findOne(request.user.id);
+    if (updatedUser) {
+      response.send({...updatedUser, password: undefined})
+    } else {
+      next(new PostNotFoundException(request.user.id as unknown as string))
+    }
+  }
+
+  private getMe = async (request: RequestWithUser, response: express.Response) => {
+    console.log('getMe')
+    // @ts-ignore
+    const user = {...request.user, password: undefined};
+    response.send(user);
+  }
+
   private getAllUsers = async (request: express.Request, response: express.Response) => {
     console.log('getAllUsers')
     const users = await this.userRepository.find();
-    response.send(users);
+    const out = users.map(user => {
+      return {...user, password: undefined}
+    })
+    response.send(out);
   }
 
   private registration = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
